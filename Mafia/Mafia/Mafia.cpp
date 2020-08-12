@@ -3,15 +3,12 @@
 
 using namespace std;
 
-int SetJob(int PersonNum)
+int SetJob(int JobNum)
 {
-	random_device PsnJob;
-
-	mt19937 gen(PsnJob());
-
-	uniform_int_distribution<int> dis(2, 3);
-
-	return dis(gen);
+	if (JobNum == 0)
+		return 2;
+	else
+		return 3;
 }
 
 int main()
@@ -25,21 +22,18 @@ int main()
 
 	cin >> PersonNum;
 
-	for (int i = 0; i < PersonNum; i++)
-	{	
-		if(Mafia < 1 || Doctor < 1)
-		{
-			Town[i] = SetJob(PersonNum);
-			if (Town[i] == 2)
-				Doctor += 1;
-			else if (Town[i] == 3)
-				Mafia += 1;
+	random_device Psn;
+	mt19937 gen(Psn());
+	uniform_int_distribution<int> dis(0, PersonNum - 1);
 
-			if (Doctor > 1)
-				Town[i] = 1;
-			else if (Mafia > 1)
-				Town[i] = 1;
-		}
+	for (int i = 0; i < 2; i++)
+	{
+		int a = dis(gen);
+
+		if (Town[a] < 2)
+			Town[a] = SetJob(i);
+		else
+			i -= 1;
 	}
 
 	for (int i = 0; i < PersonNum; i++)
