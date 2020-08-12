@@ -13,11 +13,28 @@ int SetJob(int JobNum)
 		return 3;
 }
 
-void Night(int Town[], int PersonNum)
+void Night(int Town[], int PersonNum, int Player, int Doctor)
 {
 	_getch();
 	//마피아와 의사의 행동
 	cout << "밤이 되었습니다..." << endl;
+
+	random_device Target;
+	mt19937 gen(Target());
+	uniform_int_distribution<int> dis(0, PersonNum - 1);
+
+	int DoctorsTarget = dis(gen);
+
+	int MafiasTarget = dis(gen);
+
+	if (Town[MafiasTarget] != Player && Town[MafiasTarget] != 0 && Town[MafiasTarget] != 3)
+	{
+		Town[MafiasTarget] = 0;
+	}
+	else if(Town[MafiasTarget] == Town[DoctorsTarget] && Town[Doctor] != 0)
+	{
+		Town[MafiasTarget] = 1;
+	}
 
 	for (int i = 0; i < PersonNum; i++)
 	{
@@ -25,19 +42,25 @@ void Night(int Town[], int PersonNum)
 	}
 }
 
-void Morning(int Town[],int PersonNum)
+void Morning(int Town[],int PersonNum, int Player)
 {
 	_getch();
 	//마피아와 의사의 행동결과
 	cout << "날이 밝았습니다..." << endl;
 }
 
-void Afternoon(int Town[], int PersonNum)
+void Afternoon(int Town[], int PersonNum, int Player)
 {
 	_getch();
 	//플레이어의 투표와 투표결과
 	cout << "투표시간이 되었습니다..." << endl;
 }
+
+void Result()
+{
+	//게임이 끝났는지의 여부
+}
+
 int main()
 {
 	int PersonNum = 0;
@@ -64,6 +87,13 @@ int main()
 			i -= 1;
 	}
 
+	int Doctor = 0;
+
+	for (int i = 0; i < PersonNum; i++)
+	{
+		if (Town[i] == 2)
+			Doctor = i;
+	}
 	int Player = dis(gen);
 
 	while (Town[Player] == 3)
@@ -81,11 +111,13 @@ int main()
 
 	while (1)
 	{
-		Night(Town, PersonNum);
+		Night(Town, PersonNum, Player, Doctor);
 
-		Morning(Town, PersonNum);
+		Morning(Town, PersonNum, Player);
 
-		Afternoon(Town, PersonNum);
+		Afternoon(Town, PersonNum, Player);
+
+		Result();
 	}
 
 	delete[] Town;
