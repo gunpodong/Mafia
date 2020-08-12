@@ -13,28 +13,80 @@ int SetJob(int JobNum)
 		return 3;
 }
 
+void NightResult(int Target, bool Heal, bool Overlap)
+{
+	if (Target == 0 && Overlap == false)
+	{
+		cout << "밤중에 주민 한 명이 살해 당했습니다." << endl;
+		_getch();
+	}
+	else if (Target == 0 && Overlap == true)
+	{
+		cout << "밤중에 아무일도 일어나지 않았습니다." << endl;
+		_getch();
+	}
+	else
+	{
+		if (Heal == true)
+		{
+			cout << "밤중에 의사가 환자를 치료하여 피해자가 나오지 않았습니다." << endl;
+			_getch();
+		}
+		else
+		{
+			cout << "밤중에 아무일도 일어나지 않았습니다." << endl;
+			_getch();
+		}
+	}
+}
+
 void Night(int Town[], int PersonNum, int Player, int Doctor)
 {
 	_getch();
 	//마피아와 의사의 행동
 	cout << "밤이 되었습니다..." << endl;
 
+	cout << "----------/" << Player << "/-----------" << endl;
+
 	random_device Target;
 	mt19937 gen(Target());
 	uniform_int_distribution<int> dis(0, PersonNum - 1);
 
-	int DoctorsTarget = dis(gen);
+	int DoctorsTarget = 0;
+	bool Heal = false;
+	bool Overlap = false;
+
+	if (Doctor != Player)
+		DoctorsTarget = dis(gen);
+	else
+	{
+		cout << "치료할 주민을 선택하세요 : ";
+		cin >> DoctorsTarget;
+		DoctorsTarget -= 1;
+	}
 
 	int MafiasTarget = dis(gen);
 
-	if (Town[MafiasTarget] != Player && Town[MafiasTarget] != 0 && Town[MafiasTarget] != 3)
+	if (Town[MafiasTarget] == Town[DoctorsTarget] && Town[Doctor] != 0)
+	{
+		Town[MafiasTarget] = 1;
+		Heal = true;
+	}
+	else if (Town[MafiasTarget] != Player && Town[MafiasTarget] == 1 || Town[MafiasTarget] == 2)
 	{
 		Town[MafiasTarget] = 0;
 	}
-	else if(Town[MafiasTarget] == Town[DoctorsTarget] && Town[Doctor] != 0)
+	else if (Town[MafiasTarget] == 0)
 	{
-		Town[MafiasTarget] = 1;
+		Overlap = true;
 	}
+
+	cout << "--------/" << MafiasTarget << ";;" << DoctorsTarget << "/-----------" << endl;
+
+	cout << "..." << endl;
+	_getch();
+
+	NightResult(Town[MafiasTarget], Heal,Overlap);
 
 	for (int i = 0; i < PersonNum; i++)
 	{
