@@ -11,6 +11,20 @@ int SetJob(int JobNum)
 		return 3;
 }
 
+void Night()
+{
+	//마피아와 의사의 행동
+}
+
+void Morning()
+{
+	//마피아와 의사의 행동결과
+}
+
+void Afternoon()
+{
+	//플레이어의 투표와 투표결과
+}
 int main()
 {
 	int Town[100] = { 0 };
@@ -24,7 +38,7 @@ int main()
 
 	random_device Psn;
 	mt19937 gen(Psn());
-	uniform_int_distribution<int> dis(0, PersonNum - 1);
+	uniform_int_distribution<int> dis(1, PersonNum);
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -36,8 +50,21 @@ int main()
 			i -= 1;
 	}
 
-	for (int i = 0; i < PersonNum; i++)
+	int Player = dis(gen);
+
+	while (Town[Player] == 3)
+	{
+		Player = dis(gen);
+	}
+
+	cout << "당신은 " << Player << "번 주민입니다." << endl;
+	if (Town[Player] == 1)
+		cout << "당신의 직업은 시민입니다. 투표를 통해 마피아를 찾아내세요." << endl;
+	else
+		cout << "당신의 직업은 의사입니다. 시민을 보호하며 투표를 통해 마피아를 찾아내세요." << endl;
+
+}
+/*for (int i = 1; i < PersonNum + 1; i++)
 	{
 		cout << Town[i] << endl;
-	}
-}
+	}*/
