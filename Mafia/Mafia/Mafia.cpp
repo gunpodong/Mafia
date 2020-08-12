@@ -19,7 +19,7 @@ void Night(int Town[], int PersonNum)
 	//마피아와 의사의 행동
 	cout << "밤이 되었습니다..." << endl;
 
-	for (int i = 1; i < PersonNum + 1; i++)
+	for (int i = 0; i < PersonNum; i++)
 	{
 		cout << Town[i] << endl;
 	}
@@ -40,21 +40,19 @@ void Afternoon(int Town[], int PersonNum)
 }
 int main()
 {
-	int Town[100] = { 0 };
 	int PersonNum = 0;
-	int Mafia = 0;
-	int Doctor = 0;
-	//char Next[2];
 	
-	fill_n(Town, 100, 1);
-
 	cout << "마을주민의 수를 입력하세요 : ";
 	cin >> PersonNum;
 	cout << endl;
 
+	int *Town = new int[PersonNum];
+
+	fill_n(Town, PersonNum, 1);
+	
 	random_device Psn;
 	mt19937 gen(Psn());
-	uniform_int_distribution<int> dis(1, PersonNum);
+	uniform_int_distribution<int> dis(0, PersonNum - 1);
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -73,10 +71,10 @@ int main()
 		Player = dis(gen);
 	}
 
-	cout << "당신은 " << Player << "번 주민입니다." << endl;
+	cout << "당신은 " << Player + 1<< "번 주민입니다." << endl;
 	if (Town[Player] == 1)
 		cout << "당신의 직업은 시민입니다. 투표를 통해 마피아를 찾아내세요." << endl;
-	else
+	else if (Town[Player] == 2)
 		cout << "당신의 직업은 의사입니다. 시민을 보호하며 투표를 통해 마피아를 찾아내세요." << endl;
 
 	cout << "※다음으로 넘어가기 위해선 아무키나 입력하세요※" << endl << endl;
