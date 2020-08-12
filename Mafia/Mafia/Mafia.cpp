@@ -88,5 +88,7 @@ int main()
 		Afternoon(Town, PersonNum);
 	}
 
+	delete[] Town;
+
 	return 0;
 }
