@@ -46,8 +46,6 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 	cout << "밤이 되었습니다..." << endl;
 	_getch();
 
-	//cout << "----------/" << Player << "/-----------" << endl;
-
 	random_device Target;
 	mt19937 gen(Target());
 	uniform_int_distribution<int> dis(0, PersonNum - 1);
@@ -67,24 +65,45 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 
 	int MafiasTarget = dis(gen);
 
-	if (MafiasTarget == DoctorsTarget && Town[Doctor] != 0 && Town[DoctorsTarget] != 3)
-	{
-		if (Town[DoctorsTarget] != Town[Doctor])
-			Town[DoctorsTarget] = 1;
-		else
-			Town[DoctorsTarget] = 2;
-		Heal = true;
-	}
-	else if (MafiasTarget != Player && Town[MafiasTarget] == 1 || Town[MafiasTarget] == 2)
-	{
-		Town[MafiasTarget] = 0;
-	}
-	else if (Town[MafiasTarget] == 0)
+	if (Town[MafiasTarget] == 0)
 	{
 		Overlap = true;
 	}
 
-	//cout << "--------/" << MafiasTarget << ";;" << DoctorsTarget << "/-----------" << endl;
+	if (Overlap == false)
+	{
+		if (MafiasTarget == DoctorsTarget && Town[Doctor] != 0 && Town[DoctorsTarget] != 3)
+		{
+			if (Town[DoctorsTarget] != Town[Doctor])
+				Town[DoctorsTarget] = 1;
+			else
+				Town[DoctorsTarget] = 2;
+			Heal = true;
+		}
+		else if (MafiasTarget != Player && Town[MafiasTarget] == 1 || Town[MafiasTarget] == 2)
+		{
+			Town[MafiasTarget] = 0;
+		}
+	}
+	else
+	{
+		MafiasTarget = dis(gen);
+
+		if (MafiasTarget == DoctorsTarget && Town[Doctor] != 0 && Town[DoctorsTarget] != 3)
+		{
+			if (Town[DoctorsTarget] != Town[Doctor])
+				Town[DoctorsTarget] = 1;
+			else
+				Town[DoctorsTarget] = 2;
+			Heal = true;
+		}
+		else if (MafiasTarget != Player && Town[MafiasTarget] == 1 || Town[MafiasTarget] == 2)
+		{
+			Town[MafiasTarget] = 0;
+			Overlap = false;
+		}
+	}
+
 
 	cout << "..." << endl;
 	_getch();
@@ -157,7 +176,7 @@ bool Result(int Town[], int PersonNum)
 
 	for (int i = 0; i < PersonNum; i++)
 	{
-		if (i > 0)
+		if (Town[i] > 0)
 		{
 			Live += 1;
 			if (Town[i] == 3)
@@ -225,13 +244,11 @@ int main()
 
 	cout << "당신은 " << Player + 1<< "번 주민입니다." << endl;
 	_getch();
-
 	if (Town[Player] == 1)
 		cout << "당신의 직업은 시민입니다. 투표를 통해 마피아를 찾아내세요." << endl;
 	else if (Town[Player] == 2)
 		cout << "당신의 직업은 의사입니다. 시민을 보호하며 투표를 통해 마피아를 찾아내세요." << endl;
 	_getch();
-
 	cout << "※다음으로 넘어가기 위해선 아무키나 입력하세요※" << endl << endl;
 	_getch();
 
@@ -241,6 +258,10 @@ int main()
 	{
 		Night(Town, PersonNum, Player, Doctor);
 		cout << endl;
+
+		GameSet = Result(Town, PersonNum);
+		if (GameSet == true)
+			continue;
 
 		Morning(Town, PersonNum, Player);
 		cout << endl;
