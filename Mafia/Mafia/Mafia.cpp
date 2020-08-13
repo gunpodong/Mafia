@@ -42,9 +42,9 @@ void NightResult(int Target, bool Heal, bool Overlap)
 
 void Night(int Town[], int PersonNum, int Player, int Doctor)
 {
-	_getch();
 	//마피아와 의사의 행동
 	cout << "밤이 되었습니다..." << endl;
+	_getch();
 
 	//cout << "----------/" << Player << "/-----------" << endl;
 
@@ -90,18 +90,13 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 	_getch();
 
 	NightResult(Town[MafiasTarget], Heal,Overlap);
-
-	for (int i = 0; i < PersonNum; i++)
-	{
-		cout << Town[i] << endl;
-	}
 }
 
 void Morning(int Town[], int PersonNum, int Player)
 {
-	_getch();
 	//마피아와 의사의 행동결과
 	cout << "날이 밝았습니다..." << endl;
+	_getch();
 
 	int Live = 0;
 
@@ -111,24 +106,81 @@ void Morning(int Town[], int PersonNum, int Player)
 			Live += 1;
 	}
 
-	_getch();
-
 	cout << "남은 주민의 수는 " << Live << "명 입니다." << endl;
+	_getch();
 	cout << "..." << endl;
 	_getch();
 
 }
 
-void Afternoon(int Town[], int PersonNum, int Player)
+void AfternoonResult(int Town[], int PlayersChoice)
 {
+	if (PlayersChoice != 0)
+	{
+		Town[PlayersChoice - 1] = 0;
+		cout << PlayersChoice << "번 주민이 마을에서 추방되었습니다." << endl;
+	}
+	else
+		cout << "투표가 무효 되었습니다." << endl;
 	_getch();
-	//플레이어의 투표와 투표결과
-	cout << "투표시간이 되었습니다..." << endl;
 }
 
-void Result()
+void Afternoon(int Town[], int PersonNum, int Player)
+{
+	//플레이어의 투표와 투표결과
+	cout << "투표시간이 되었습니다..." << endl;
+	_getch();
+
+	int PlayersChoice = 0;
+
+	for (int i = 0; i < PersonNum; i++)
+	{
+		if (Town[i] != 0 && i != Player)
+			cout << i + 1 << "번 ";
+	}
+	cout << endl << "위의 주민들 중 마피아라고 생각되는 주민을 지목하세요(무효표는 0번 입니다.) : ";
+	cin >> PlayersChoice;
+
+	_getch();
+	cout << "..." << endl;
+	_getch();
+
+	AfternoonResult(Town,PlayersChoice);
+}
+
+bool Result(int Town[], int PersonNum)
 {
 	//게임이 끝났는지의 여부
+	bool GameSet = true;
+	bool MafiaWin = false;
+	int Live = 0;
+
+	for (int i = 0; i < PersonNum; i++)
+	{
+		if (i > 0)
+		{
+			Live += 1;
+			if (Town[i] == 3)
+				GameSet = false;
+		}
+	}
+
+	if (Live == 2)
+	{
+		MafiaWin = true;
+		GameSet = true;
+	}
+
+	if (GameSet == true)
+	{
+		if (MafiaWin == true)
+			cout << "마을에 마피아와 플레이어만 남았으므로 마피아의 승리입니다." << endl;
+		else
+			cout << "마피아가 마을에서 추방되었으므로 시민들의 승리입니다." << endl;
+		_getch();
+	}
+
+	return GameSet;
 }
 
 int main()
@@ -172,22 +224,31 @@ int main()
 	}
 
 	cout << "당신은 " << Player + 1<< "번 주민입니다." << endl;
+	_getch();
+
 	if (Town[Player] == 1)
 		cout << "당신의 직업은 시민입니다. 투표를 통해 마피아를 찾아내세요." << endl;
 	else if (Town[Player] == 2)
 		cout << "당신의 직업은 의사입니다. 시민을 보호하며 투표를 통해 마피아를 찾아내세요." << endl;
+	_getch();
 
 	cout << "※다음으로 넘어가기 위해선 아무키나 입력하세요※" << endl << endl;
+	_getch();
 
-	while (1)
+	bool GameSet = false;
+
+	while (!GameSet)
 	{
 		Night(Town, PersonNum, Player, Doctor);
+		cout << endl;
 
 		Morning(Town, PersonNum, Player);
+		cout << endl;
 
 		Afternoon(Town, PersonNum, Player);
+		cout << endl;
 
-		Result();
+		GameSet = Result(Town, PersonNum);
 	}
 
 	delete[] Town;
