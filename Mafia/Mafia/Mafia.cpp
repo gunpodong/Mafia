@@ -46,7 +46,7 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 	//마피아와 의사의 행동
 	cout << "밤이 되었습니다..." << endl;
 
-	cout << "----------/" << Player << "/-----------" << endl;
+	//cout << "----------/" << Player << "/-----------" << endl;
 
 	random_device Target;
 	mt19937 gen(Target());
@@ -84,7 +84,7 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 		Overlap = true;
 	}
 
-	cout << "--------/" << MafiasTarget << ";;" << DoctorsTarget << "/-----------" << endl;
+	//cout << "--------/" << MafiasTarget << ";;" << DoctorsTarget << "/-----------" << endl;
 
 	cout << "..." << endl;
 	_getch();
@@ -97,11 +97,26 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 	}
 }
 
-void Morning(int Town[],int PersonNum, int Player)
+void Morning(int Town[], int PersonNum, int Player)
 {
 	_getch();
 	//마피아와 의사의 행동결과
 	cout << "날이 밝았습니다..." << endl;
+
+	int Live = 0;
+
+	for (int i = 0; i < PersonNum; i++)
+	{
+		if (Town[i] != 0)
+			Live += 1;
+	}
+
+	_getch();
+
+	cout << "남은 주민의 수는 " << Live << "명 입니다." << endl;
+	cout << "..." << endl;
+	_getch();
+
 }
 
 void Afternoon(int Town[], int PersonNum, int Player)
