@@ -232,6 +232,7 @@ int main()
 {
 	int PersonNum = 0;
 	
+	cout << "이것은 마피아 게임입니다." << endl;
 	cout << "마을주민의 수를 입력하세요 : ";
 	cin >> PersonNum;
 	cout << endl;
