@@ -40,7 +40,7 @@ void NightResult(int Target, bool Heal, bool Overlap)
 	}
 }
 
-void Night(int Town[], int PersonNum, int Player, int Doctor)
+void Night(int Town[], int PersonNum, int Player, int Doctor, int Mafia)
 {
 	//마피아와 의사의 행동
 	cout << "밤이 되었습니다..." << endl;
@@ -51,6 +51,7 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 	uniform_int_distribution<int> dis(0, PersonNum - 1);
 
 	int DoctorsTarget = 0;
+	int MafiasTarget = 0;
 	bool Heal = false;
 	bool Overlap = false;
 
@@ -63,7 +64,14 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 		DoctorsTarget -= 1;
 	}
 
-	int MafiasTarget = dis(gen);
+	if (Mafia != Player)
+		MafiasTarget = dis(gen);
+	else
+	{
+		cout << "살해할 주민을 선택하세요 : ";
+		cin >> MafiasTarget;
+		MafiasTarget -= 1;
+	}
 
 	if (Town[MafiasTarget] == 0)
 	{
@@ -85,7 +93,7 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 			Town[MafiasTarget] = 0;
 		}
 	}
-	else
+	else if(Mafia != Player)
 	{
 		MafiasTarget = dis(gen);
 
@@ -136,29 +144,47 @@ void AfternoonResult(int Town[], int PlayersChoice)
 {
 	if (PlayersChoice != 0)
 	{
-		Town[PlayersChoice - 1] = 0;
-		cout << PlayersChoice << "번 주민이 마을에서 추방되었습니다." << endl;
+		if (Town[PlayersChoice - 1] != 0)
+		{
+			Town[PlayersChoice - 1] = 0;
+			cout << PlayersChoice << "번 주민이 마을에서 추방되었습니다." << endl;
+		}
+		else
+			cout << "이미 죽은 주민입니다." << endl;
 	}
 	else
 		cout << "투표가 무효 되었습니다." << endl;
 	_getch();
 }
 
-void Afternoon(int Town[], int PersonNum, int Player)
+void Afternoon(int Town[], int PersonNum, int Player, int Mafia)
 {
 	//플레이어의 투표와 투표결과
+	random_device Choice;
+	mt19937 gen(Choice());
+	uniform_int_distribution<int> dis(0, PersonNum - 1);
+
 	cout << "투표시간이 되었습니다..." << endl;
 	_getch();
 
 	int PlayersChoice = 0;
 
-	for (int i = 0; i < PersonNum; i++)
+	if (Mafia != Player)
 	{
-		if (Town[i] != 0 && i != Player)
-			cout << i + 1 << "번 ";
+		for (int i = 0; i < PersonNum; i++)
+		{
+			if (i != Player)
+				cout << i + 1 << "번 ";
+		}
+
+		cout << endl << "위의 주민들 중 마피아라고 생각되는 주민을 지목하세요(무효표는 0번 입니다.) : ";
+		cin >> PlayersChoice;
 	}
-	cout << endl << "위의 주민들 중 마피아라고 생각되는 주민을 지목하세요(무효표는 0번 입니다.) : ";
-	cin >> PlayersChoice;
+	else
+	{
+		PlayersChoice = dis(gen);
+		cout << "주민들의 투표결과는 " << PlayersChoice << "번입니다." << endl;
+	}
 
 	_getch();
 	cout << "..." << endl;
@@ -229,18 +255,21 @@ int main()
 	}
 
 	int Doctor = 0;
+	int Mafia = 0;
 
 	for (int i = 0; i < PersonNum; i++)
 	{
 		if (Town[i] == 2)
 			Doctor = i;
+		else if (Town[i] == 3)
+			Mafia = i;
 	}
 	int Player = dis(gen);
 
-	while (Town[Player] == 3)
+	/*while (Town[Player] == 3)
 	{
 		Player = dis(gen);
-	}
+	}*/
 
 	cout << "당신은 " << Player + 1<< "번 주민입니다." << endl;
 	_getch();
@@ -248,6 +277,8 @@ int main()
 		cout << "당신의 직업은 시민입니다. 투표를 통해 마피아를 찾아내세요." << endl;
 	else if (Town[Player] == 2)
 		cout << "당신의 직업은 의사입니다. 시민을 보호하며 투표를 통해 마피아를 찾아내세요." << endl;
+	else if (Town[Player] == 3)
+		cout << "당신의 직업은 마피아입니다. 시민들을 살해하여 마을에서 살아남으세요." << endl;
 	_getch();
 	cout << "※다음으로 넘어가기 위해선 아무키나 입력하세요※" << endl << endl;
 	_getch();
@@ -256,7 +287,7 @@ int main()
 
 	while (!GameSet)
 	{
-		Night(Town, PersonNum, Player, Doctor);
+		Night(Town, PersonNum, Player, Doctor, Mafia);
 		cout << endl;
 
 		GameSet = Result(Town, PersonNum);
@@ -266,7 +297,7 @@ int main()
 		Morning(Town, PersonNum, Player);
 		cout << endl;
 
-		Afternoon(Town, PersonNum, Player);
+		Afternoon(Town, PersonNum, Player, Mafia);
 		cout << endl;
 
 		GameSet = Result(Town, PersonNum);
