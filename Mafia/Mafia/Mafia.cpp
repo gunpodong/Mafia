@@ -67,12 +67,15 @@ void Night(int Town[], int PersonNum, int Player, int Doctor)
 
 	int MafiasTarget = dis(gen);
 
-	if (Town[MafiasTarget] == Town[DoctorsTarget] && Town[Doctor] != 0)
+	if (MafiasTarget == DoctorsTarget && Town[Doctor] != 0 && Town[DoctorsTarget] != 3)
 	{
-		Town[MafiasTarget] = 1;
+		if (Town[DoctorsTarget] != Town[Doctor])
+			Town[DoctorsTarget] = 1;
+		else
+			Town[DoctorsTarget] = 2;
 		Heal = true;
 	}
-	else if (Town[MafiasTarget] != Player && Town[MafiasTarget] == 1 || Town[MafiasTarget] == 2)
+	else if (MafiasTarget != Player && Town[MafiasTarget] == 1 || Town[MafiasTarget] == 2)
 	{
 		Town[MafiasTarget] = 0;
 	}
